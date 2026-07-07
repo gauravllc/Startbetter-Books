@@ -185,7 +185,7 @@
                 </a>
             </div>
 
-            <!-- ADDED: Total Value & Timer Block -->
+            <!-- Total Value & Timer Block -->
             <div class="flex flex-col items-center justify-center mt-4 gap-2">
                 <div class="text-sm font-black uppercase text-brandBlack tracking-wide">
                     Total Books Value: <span class="text-red-600 line-through">₹9,000</span>
@@ -209,7 +209,7 @@
         <div class="max-w-lg mx-auto">
             <h2 class="text-2xl font-black mb-6 text-center text-brandBlack uppercase">What's Inside?</h2>
             
-            <!-- ADDED: B3 Image Block Here -->
+            <!-- B3 Image Block Here -->
             <img src="image/B3.jpeg" alt="What's Inside Detail" class="w-full h-auto mb-6 shadow-sm border border-gray-200">
 
             <div class="space-y-3 text-sm font-bold text-brandBlack">
@@ -264,7 +264,7 @@
                     </a>
                 </div>
 
-                <!-- ADDED: Total Value & Timer Block -->
+                <!-- Total Value & Timer Block -->
                 <div class="flex flex-col items-center justify-center mt-4 gap-2">
                     <div class="text-sm font-black uppercase text-brandBlack tracking-wide">
                         Total Books Value: <span class="text-red-600 line-through">₹9,000</span>
@@ -380,7 +380,7 @@
         <p class="font-medium text-gray-500">&copy; 2026 StartBetter. All rights reserved.</p>
     </footer>
 
-    <!-- Bottom Sticky CTA for Mobile (Light Mode & Sharp) -->
+    <!-- Bottom Sticky CTA for Mobile -->
     <div id="buy" class="md:hidden sticky-cta flex items-center justify-between gap-4">
         <div class="text-left flex-1">
             <div class="flex items-center gap-2">
@@ -397,6 +397,7 @@
         </a>
     </div>
 
+    <!-- UPDATE: INFINITE AUTO-SCROLL JS ADDED HERE -->
     <script>
         // Looping Countdown Timer (10 Mins = 600 seconds)
         let time = 600; 
@@ -415,18 +416,48 @@
             time--;
         }, 1000);
 
-        // Center Carousel Script to load perfectly aligned on the first real item 
+        // Infinite Auto-Scrolling Carousel Script
         document.addEventListener("DOMContentLoaded", () => {
             const container = document.getElementById('scroll-container');
-            const firstReal = document.getElementById('first-real');
-            if(container && firstReal) {
-                // Instantly calculate and set the exact center layout before showing
-                const centerPos = firstReal.offsetLeft - (container.clientWidth / 2) + (firstReal.clientWidth / 2);
-                container.scrollLeft = centerPos;
-                // Smooth fade in after positioning to prevent jump
+            if(container) {
+                // Smooth fade in
                 setTimeout(() => {
                     container.style.opacity = '1';
                 }, 50);
+
+                // Remove snap classes so smooth continuous scroll works perfectly
+                container.classList.remove('snap-x', 'snap-mandatory');
+                
+                // Clone the cards to create a seamless infinite loop
+                const originalCards = Array.from(container.children);
+                originalCards.forEach(card => {
+                    let clone = card.cloneNode(true);
+                    clone.removeAttribute('id'); // Prevent duplicate IDs
+                    container.appendChild(clone);
+                });
+
+                let isInteracting = false;
+                
+                // Pause scrolling when user touches or hovers
+                container.addEventListener('touchstart', () => isInteracting = true, {passive: true});
+                container.addEventListener('touchend', () => setTimeout(() => isInteracting = false, 500));
+                container.addEventListener('mouseenter', () => isInteracting = true);
+                container.addEventListener('mouseleave', () => isInteracting = false);
+
+                function autoScroll() {
+                    if (!isInteracting) {
+                        container.scrollLeft += 1; // Auto-scroll speed
+                        
+                        // Seamless loop: If we've scrolled exactly past the first original set of cards
+                        if (container.scrollLeft >= container.scrollWidth / 2) {
+                            container.scrollLeft = 0; 
+                        }
+                    }
+                    requestAnimationFrame(autoScroll);
+                }
+                
+                // Start the animation loop
+                requestAnimationFrame(autoScroll);
             }
         });
     </script>
